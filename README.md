@@ -17,10 +17,12 @@ I built this project to practice writing maintainable UI automation. It started 
 ├── pages/                  # Page Object classes, one per app page
 │   ├── LoginPage.ts
 │   ├── InventoryPage.ts
+│   ├── CartPage.ts
 │   └── ...
 ├── tests/                  # Test specs, grouped by feature/page
 │   ├── login.spec.ts
-│   └── inventory.spec.ts
+│   ├── inventory.spec.ts
+│   └── cart.spec.ts
 ├── fixtures.ts             # Custom fixtures that wire page objects into tests
 ├── playwright.config.ts    # Playwright configuration
 └── README.md
@@ -67,8 +69,9 @@ npx playwright show-report
 |-----------|-------------------------------------------------------------------------------------|
 | Login     | Valid login, invalid username, locked-out user, empty credentials                  |
 | Inventory | Add to cart, remove from cart, add multiple items, cart badge count, Remove button state |
+| Cart      | Item added successfully, multiple items present, item removed and no longer listed, cart badge updates on add/remove, Continue Shopping navigation, Checkout navigation |
 
-*(This table will grow as I add Cart and Checkout coverage.)*
+*(This table will grow as I add Checkout coverage.)*
 
 ## Roadmap
 
@@ -76,9 +79,11 @@ npx playwright show-report
 - [x] Refactor into Page Object Model
 - [x] Add custom fixtures for dependency injection
 - [x] Build LoginPage and InventoryPage
-- [ ] Build CartPage
+- [x] Build CartPage
 - [ ] Build CheckoutPage
 - [ ] Write a full end-to-end purchase flow test
+- [ ] Refactor shared header elements (cart icon, cart badge) into a HeaderComponent used across pages
+- [ ] Set up GitHub Actions to run tests on every push/PR
 - [ ] Try Playwright's agent tools (planner, generator, healer) for AI-assisted test authoring
 
 ## Why I Built This
