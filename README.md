@@ -24,7 +24,7 @@ npm run report           # Open the latest HTML report
 npx playwright test tests/login.spec.ts  # Run one spec
 ```
 
-The default configuration runs Chromium. Set `CI=true` to enable retries, use one worker, and reject focused tests. Traces are collected for retry attempts. The GitHub Actions workflow runs the suite for pushes and pull requests targeting `main` or `master`, then uploads the HTML report.
+The default configuration runs Chromium. Set `CI=true` to enable retries, use one worker, and reject focused tests. In CI, the list reporter makes retry-resolved flaky tests visible in the job log, while the HTML report provides the full run details. Traces are collected for retry attempts. The GitHub Actions workflow runs on pushes and pull requests targeting `main` or `master`, uploads the HTML report artifact even when tests fail (if a report was generated), and adds a job summary with the test result and artifact location.
 
 ## Project structure
 

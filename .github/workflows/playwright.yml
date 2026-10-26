@@ -4,6 +4,8 @@ on:
     branches: [ main, master ]
   pull_request:
     branches: [ main, master ]
+permissions:
+  contents: read
 jobs:
   test:
     timeout-minutes: 60
@@ -12,16 +14,32 @@ jobs:
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4
       with:
-        node-version: lts/*
+        node-version: 20
     - name: Install dependencies
       run: npm ci
     - name: Install Playwright Browsers
-      run: npx playwright install --with-deps
+      run: npx playwright install --with-deps chromium
     - name: Run Playwright tests
+      id: playwright-tests
       run: npx playwright test
     - uses: actions/upload-artifact@v4
-      if: ${{ !cancelled() }}
+      if: always()
       with:
-        name: playwright-report
+        name: playwright-html-report
         path: playwright-report/
         retention-days: 30
+        if-no-files-found: ignore
+    - name: Add test summary
+      if: always()
+      env:
+        TEST_OUTCOME: ${{ steps.playwright-tests.outcome }}
+        RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+      run: |
+        {
+          echo "## Playwright test result"
+          echo ""
+          echo "Result: **${TEST_OUTCOME}**"
+          echo ""
+          echo "Download the playwright-html-report artifact from the [workflow run artifacts](${RUN_URL})."
+          echo "Retry-resolved flaky tests are shown in the test log and HTML report."
+        } >> "$GITHUB_STEP_SUMMARY"
