@@ -16,6 +16,39 @@ test.describe('Checkout cases', () => {
         await checkoutPage.fillCheckoutInformation('John', 'Doe', '12345');
         await expect(checkoutPage.page).toHaveURL(/checkout-step-two.html/);
     });
+
+    test('checkout requires a first name', async ({ loginPage, inventoryPage, cartPage, checkoutPage }) => {
+        await loginPage.login('standard_user', 'secret_sauce');
+        await inventoryPage.addProductToCart('Sauce Labs Backpack');
+        await cartPage.openCart();
+        await cartPage.clickCheckout();
+        await checkoutPage.fillCheckoutInformation('', 'Doe', '12345');
+
+        await checkoutPage.expectErrorMessage('First Name is required');
+        await expect(checkoutPage.page).toHaveURL(/checkout-step-one.html/);
+    });
+
+    test('checkout requires a last name', async ({ loginPage, inventoryPage, cartPage, checkoutPage }) => {
+        await loginPage.login('standard_user', 'secret_sauce');
+        await inventoryPage.addProductToCart('Sauce Labs Backpack');
+        await cartPage.openCart();
+        await cartPage.clickCheckout();
+        await checkoutPage.fillCheckoutInformation('John', '', '12345');
+
+        await checkoutPage.expectErrorMessage('Last Name is required');
+        await expect(checkoutPage.page).toHaveURL(/checkout-step-one.html/);
+    });
+
+    test('checkout requires a postal code', async ({ loginPage, inventoryPage, cartPage, checkoutPage }) => {
+        await loginPage.login('standard_user', 'secret_sauce');
+        await inventoryPage.addProductToCart('Sauce Labs Backpack');
+        await cartPage.openCart();
+        await cartPage.clickCheckout();
+        await checkoutPage.fillCheckoutInformation('John', 'Doe', '');
+
+        await checkoutPage.expectErrorMessage('Postal Code is required');
+        await expect(checkoutPage.page).toHaveURL(/checkout-step-one.html/);
+    });
     test('Verify that the checkout can be completed successfully', async ({ loginPage, inventoryPage, cartPage, checkoutPage }) => {
         await loginPage.login('standard_user', 'secret_sauce');
         await inventoryPage.addProductToCart('Sauce Labs Backpack');

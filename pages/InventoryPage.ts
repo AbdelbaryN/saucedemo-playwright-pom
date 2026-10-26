@@ -3,11 +3,17 @@ import { Page, Locator, expect } from '@playwright/test';
 export class InventoryPage {
     readonly page: Page;
     readonly cartBadge: Locator;
+    readonly productSort: Locator;
+    readonly productNames: Locator;
+    readonly productPrices: Locator;
 
 
     constructor(page: Page) {
         this.page = page;
         this.cartBadge = page.getByTestId('shopping-cart-badge');
+        this.productSort = page.getByRole('combobox');
+        this.productNames = page.getByTestId('inventory-item-name');
+        this.productPrices = page.getByTestId('inventory-item-price');
     }
 
     private getProductCard(productName: string): Locator {
@@ -35,6 +41,10 @@ export class InventoryPage {
         }
 
         await expect(this.cartBadge).toHaveText(String(expectedCount));
+    }
+
+    async sortProducts(option: 'az' | 'za' | 'lohi' | 'hilo') {
+        await this.productSort.selectOption(option);
     }
 
 }

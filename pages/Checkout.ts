@@ -1,4 +1,4 @@
-import { Page, Locator } from "@playwright/test";
+import { Page, Locator, expect } from "@playwright/test";
 
 export class Checkout {
     readonly page: Page;
@@ -14,6 +14,7 @@ export class Checkout {
     readonly totalLabel: Locator;
     readonly cancelButton: Locator;
     readonly thankYouHeaderMessage: Locator;
+    readonly errorMessage: Locator;
 
     constructor(page: Page) {
         this.page = page;
@@ -32,6 +33,7 @@ export class Checkout {
         this.totalLabel = page.getByTestId('total-label');
         this.cancelButton = page.getByTestId('cancel');
         this.thankYouHeaderMessage = page.getByTestId('complete-header');
+        this.errorMessage = page.getByTestId('error');
     }
 
     // Complete checkout step one and continue to the order overview.
@@ -48,5 +50,9 @@ export class Checkout {
 
     async cancelCheckout() {
         await this.cancelButton.click();
+    }
+
+    async expectErrorMessage(expectedMessage: string) {
+        await expect(this.errorMessage).toContainText(expectedMessage);
     }
 }

@@ -15,6 +15,18 @@ test.describe('Login', () => {
         await loginPage.expectErrorMessage('do not match');
     });
 
+    test('valid username with incorrect password shows error', async ({ loginPage }) => {
+        await loginPage.login('standard_user', 'incorrect_password');
+
+        await loginPage.expectErrorMessage('do not match');
+    });
+
+    test('valid username with empty password shows error', async ({ loginPage }) => {
+        await loginPage.login('standard_user', '');
+
+        await loginPage.expectErrorMessage('Password is required');
+    });
+
     test('login with lockedout user', async ({ loginPage }) => {
         await loginPage.login('locked_out_user', 'secret_sauce');
         await loginPage.expectErrorMessage('locked out');
