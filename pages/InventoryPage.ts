@@ -28,9 +28,13 @@ export class InventoryPage {
         const productCard = this.getProductCard(productName);
         await productCard.getByRole('button', { name: 'Remove' }).click();
     }
-    async getCartCount(): Promise<number> {
-        if (await this.cartBadge.count() === 0) return 0;
-        return Number(await this.cartBadge.textContent());
+    async expectCartCount(expectedCount: number) {
+        if (expectedCount === 0) {
+            await expect(this.cartBadge).toBeHidden();
+            return;
+        }
+
+        await expect(this.cartBadge).toHaveText(String(expectedCount));
     }
 
 }

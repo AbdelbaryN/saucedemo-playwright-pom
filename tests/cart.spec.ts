@@ -5,17 +5,17 @@ test.describe('Cart cases', () => {
        await loginPage.login('standard_user', 'secret_sauce');
        await inventoryPage.addProductToCart('Sauce Labs Backpack');
        await cartPage.openCart();
-       const cartItems = await cartPage.getCartItems();
-       expect(cartItems).toContain('Sauce Labs Backpack');
+       await expect(cartPage.cartItemName).toHaveText(['Sauce Labs Backpack']);
     });
     test("Verify adding multiple items to the cart and verifying their presence", async ({ loginPage, inventoryPage, cartPage }) => {
         await loginPage.login('standard_user', 'secret_sauce');
         await inventoryPage.addProductToCart('Sauce Labs Backpack');
         await inventoryPage.addProductToCart('Sauce Labs Bike Light');
         await cartPage.openCart();
-        const cartItems = await cartPage.getCartItems();
-        expect(cartItems).toContain('Sauce Labs Backpack');
-        expect(cartItems).toContain('Sauce Labs Bike Light');
+        await expect(cartPage.cartItemName).toHaveText([
+            'Sauce Labs Backpack',
+            'Sauce Labs Bike Light',
+        ]);
     });
     test("Verify removing an item from the cart and ensuring it's no longer present", async ({ loginPage, inventoryPage, cartPage }) => {
         await loginPage.login('standard_user', 'secret_sauce');
@@ -23,19 +23,17 @@ test.describe('Cart cases', () => {
         await inventoryPage.addProductToCart('Sauce Labs Bike Light');
         await cartPage.openCart();
         await cartPage.removeItemFromCart('Sauce Labs Backpack');
-        const cartItems = await cartPage.getCartItems();
-        expect(cartItems).not.toContain('Sauce Labs Backpack');
-        expect(cartItems).toContain('Sauce Labs Bike Light');
+        await expect(cartPage.cartItemName).toHaveText(['Sauce Labs Bike Light']);
     });
     test ("Verify that the cart badge count updates correctly when items are added and removed", async ({ loginPage, inventoryPage, cartPage }) => {
         await loginPage.login('standard_user', 'secret_sauce');
         await inventoryPage.addProductToCart('Sauce Labs Backpack');
-        expect(await inventoryPage.getCartCount()).toBe(1);
+        await inventoryPage.expectCartCount(1);
         await inventoryPage.addProductToCart('Sauce Labs Bike Light');
-        expect(await inventoryPage.getCartCount()).toBe(2);
+        await inventoryPage.expectCartCount(2);
         await cartPage.openCart();
         await cartPage.removeItemFromCart('Sauce Labs Backpack');
-        expect(await inventoryPage.getCartCount()).toBe(1);
+        await inventoryPage.expectCartCount(1);
     });
 
     test('Verify that the inventory page appear after clicking the continue shopping button', async ({ loginPage, inventoryPage, cartPage }) => {

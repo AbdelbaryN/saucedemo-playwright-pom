@@ -24,6 +24,7 @@ test.describe('Checkout cases', () => {
         await checkoutPage.fillCheckoutInformation('John', 'Doe', '12345');
         await checkoutPage.finishCheckout();
         await expect(checkoutPage.page).toHaveURL(/checkout-complete.html/);
+        await expect(checkoutPage.thankYouHeaderMessage).toHaveText('Thank you for your order!');
     });
     test('Verify that the checkout can be canceled and return to the inventory page', async ({ loginPage, inventoryPage, cartPage, checkoutPage }) => {
         await loginPage.login('standard_user', 'secret_sauce');
@@ -59,8 +60,10 @@ test.describe('Checkout cases', () => {
         await inventoryPage.addProductToCart('Sauce Labs Backpack');
         await inventoryPage.addProductToCart('Sauce Labs Bike Light');
         await cartPage.openCart();
-        const cartItems = await cartPage.getCartItems();
-        const cartPrices = await cartPage.getCartPrices();
+        const cartItems = ['Sauce Labs Backpack', 'Sauce Labs Bike Light'];
+        const cartPrices = ['$29.99', '$9.99'];
+        await expect(cartPage.cartItemName).toHaveText(cartItems);
+        await expect(cartPage.cartItemPrice).toHaveText(cartPrices);
         await cartPage.clickCheckout();
         await checkoutPage.fillCheckoutInformation('John', 'Doe', '12345');
         await expect(checkoutPage.itemNames).toHaveText(cartItems);

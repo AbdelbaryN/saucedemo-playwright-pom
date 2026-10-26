@@ -23,13 +23,6 @@ export class CartPage {
     async openCart(){
         await this.cartIcon.click();
     }
-    async getCartItems(): Promise<string[]> {
-        return await this.cartItemName.allTextContents();
-    }
-    async getCartPrices(): Promise<string[]> {
-        return await this.cartItemPrice.allTextContents();
-    }
-
     async removeItemFromCart(productName: string) {
         const productCard =  this.cartItem.filter({ hasText: productName });
         await productCard.getByRole('button', { name: 'Remove' }).click();
