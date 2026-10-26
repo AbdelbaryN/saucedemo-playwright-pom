@@ -1,91 +1,52 @@
-# Saucedemo Playwright Automation Framework
+# SauceDemo Playwright Automation
 
-This is an end-to-end test automation project for [saucedemo.com](https://www.saucedemo.com/), built with Playwright and TypeScript. It follows the Page Object Model (POM) pattern and uses Playwright's custom fixtures to keep tests clean and reusable.
+End-to-end browser tests for [SauceDemo](https://www.saucedemo.com/), written in TypeScript with Playwright Test. The suite uses page objects and custom fixtures to keep application interactions reusable and test setup consistent.
 
-I built this project to practice writing maintainable UI automation. It started as simple, raw locator-based tests and grew into a structured framework as I learned more.
+## Requirements
 
-## Tech Stack
-
-- Playwright (end-to-end testing framework)
-- TypeScript
-- Page Object Model (POM)
-- Custom Playwright fixtures for injecting page objects into tests
-
-## Project Structure
-
-```
-├── pages/                  # Page Object classes, one per app page
-│   ├── LoginPage.ts
-│   ├── InventoryPage.ts
-│   ├── CartPage.ts
-│   └── ...
-├── tests/                  # Test specs, grouped by feature/page
-│   ├── login.spec.ts
-│   ├── inventory.spec.ts
-│   └── cart.spec.ts
-├── fixtures.ts             # Custom fixtures that wire page objects into tests
-├── playwright.config.ts    # Playwright configuration
-└── README.md
-```
-
-## Design Decisions
-
-**Page Object Model.** Each page of the app has its own class with clear, readable methods like `login()` and `addProductToCart()`. Test files never touch raw locators directly.
-
-**Actions kept separate from assertions.** Methods either do something (like `addProductToCart`) or verify something (like `expectErrorMessage`), never both. This keeps action methods reusable in both positive and negative test scenarios, instead of forcing an assertion every time an action runs.
-
-**Custom fixtures instead of `beforeEach`.** Page objects are injected as fixtures, so a test only asks for what it actually needs (`{ loginPage, inventoryPage }`), and setup logic lives in one place instead of being copied into every file.
-
-**Stable locators.** Tests use `data-test` attributes, configured as Playwright's `testIdAttribute`, instead of CSS classes or ids. `data-test` exists specifically for automation, so it's less likely to break when the site's styling changes.
+- Node.js 20 or newer
+- npm
 
 ## Setup
 
 ```bash
-git clone https://github.com/AbdelbaryN/saucedemo-playwright-pom.git
-cd saucedemo-playwright-pom
-npm install
+npm ci
 npx playwright install
 ```
 
-## Running Tests
+## Run the tests
 
 ```bash
-# Run all tests headless
-npx playwright test
-
-# Run with interactive UI mode
-npx playwright test --ui
-
-# Run one file
-npx playwright test tests/login.spec.ts
-
-# View the HTML report after a run
-npx playwright show-report
+npm test                 # Run the suite headless
+npm run test:headed      # Run with a visible browser
+npm run test:ui          # Open Playwright UI mode
+npm run report           # Open the latest HTML report
+npx playwright test tests/login.spec.ts  # Run one spec
 ```
 
-## Test Coverage
+The default configuration runs Chromium. Set `CI=true` to enable retries, use one worker, and reject focused tests. Traces are collected for retry attempts. The GitHub Actions workflow runs the suite for pushes and pull requests targeting `main` or `master`, then uploads the HTML report.
 
-| Page      | Scenarios covered                                                                 |
-|-----------|-------------------------------------------------------------------------------------|
-| Login     | Valid login, invalid username, locked-out user, empty credentials                  |
-| Inventory | Add to cart, remove from cart, add multiple items, cart badge count, Remove button state |
-| Cart      | Item added successfully, multiple items present, item removed and no longer listed, cart badge updates on add/remove, Continue Shopping navigation, Checkout navigation |
+## Project structure
 
-*(This table will grow as I add Checkout coverage.)*
+```text
+pages/                     Page object classes
+tests/                     Feature-focused Playwright specs
+fixtures.ts                Page object fixtures
+playwright.config.ts       Runner, browser, and reporting configuration
+.github/workflows/         CI workflows
+```
 
-## Roadmap
+## Coverage
 
-- [x] Raw Playwright tests against saucedemo
-- [x] Refactor into Page Object Model
-- [x] Add custom fixtures for dependency injection
-- [x] Build LoginPage and InventoryPage
-- [x] Build CartPage
-- [ ] Build CheckoutPage
-- [ ] Write a full end-to-end purchase flow test
-- [ ] Refactor shared header elements (cart icon, cart badge) into a HeaderComponent used across pages
-- [ ] Set up GitHub Actions to run tests on every push/PR
-- [ ] Try Playwright's agent tools (planner, generator, healer) for AI-assisted test authoring
+| Area | Scenarios |
+| --- | --- |
+| Login | Successful login, invalid username, locked-out user, empty credentials |
+| Inventory | Add and remove products, multiple products, cart count, remove button state |
+| Cart | Added items and prices, removal, badge updates, continue shopping, checkout navigation |
+| Checkout | Navigation, customer information, order completion and cancellation, confirmation, item names and prices, cart-to-overview consistency |
 
-## Why I Built This
+Tests use `data-test` locators where the application provides them and role or page-specific locators elsewhere. Page objects expose actions and useful locators; tests own scenario assertions so expectations remain visible beside the behavior they verify.
 
-I wanted hands-on practice with the patterns that matter once a test suite grows past a handful of files: keeping tests maintainable with POM, avoiding repetition with fixtures, and using locators that don't break every time the site's styling changes.
+## Scope
+
+This is a UI automation sample against the public SauceDemo site. It currently targets Chromium and uses the sample application's built-in accounts and catalog. Firefox and WebKit projects can be enabled in `playwright.config.ts` when cross-browser coverage is needed.

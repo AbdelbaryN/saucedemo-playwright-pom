@@ -41,8 +41,7 @@ test.describe('Checkout cases', () => {
         await cartPage.clickCheckout();
         await checkoutPage.fillCheckoutInformation('John', 'Doe', '12345');
         await checkoutPage.finishCheckout();
-        const successMessage = await checkoutPage.successMessage();
-        await expect(successMessage).toContain('Thank you for your order');
+        await expect(checkoutPage.thankYouHeaderMessage).toContainText('Thank you for your order');
     });
 
     test('Verify that the item names and prices are displayed correctly on the checkout page', async ({ loginPage, inventoryPage, cartPage, checkoutPage }) => {
@@ -52,12 +51,8 @@ test.describe('Checkout cases', () => {
         await cartPage.openCart();
         await cartPage.clickCheckout();
         await checkoutPage.fillCheckoutInformation('John', 'Doe', '12345');
-        const itemNames = await checkoutPage.getItemNames();
-        const itemPrices = await checkoutPage.getItemPrices();
-        expect(itemNames).toContain('Sauce Labs Backpack');
-        expect(itemNames).toContain('Sauce Labs Bike Light');
-        expect(itemPrices).toContain('$29.99');
-        expect(itemPrices).toContain('$9.99');
+        await expect(checkoutPage.itemNames).toHaveText(['Sauce Labs Backpack', 'Sauce Labs Bike Light']);
+        await expect(checkoutPage.itemPrices).toHaveText(['$29.99', '$9.99']);
     });
     test('Verify that the items in the checkout page match the items in the cart', async ({ loginPage, inventoryPage, cartPage, checkoutPage }) => {
         await loginPage.login('standard_user', 'secret_sauce');        
@@ -68,9 +63,7 @@ test.describe('Checkout cases', () => {
         const cartPrices = await cartPage.getCartPrices();
         await cartPage.clickCheckout();
         await checkoutPage.fillCheckoutInformation('John', 'Doe', '12345');
-        const checkoutItems = await checkoutPage.getItemNames();
-        const checkoutPrices = await checkoutPage.getItemPrices();
-        expect(checkoutItems).toEqual(cartItems);
-        expect(checkoutPrices).toEqual(cartPrices);
+        await expect(checkoutPage.itemNames).toHaveText(cartItems);
+        await expect(checkoutPage.itemPrices).toHaveText(cartPrices);
     });
 });

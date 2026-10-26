@@ -43,7 +43,7 @@ test.describe('Cart cases', () => {
         await inventoryPage.addProductToCart('Sauce Labs Backpack');
         await cartPage.openCart();
         await cartPage.clickContinueShopping();
-        expect(inventoryPage.page).toHaveURL(/inventory.html/);
+        await expect(inventoryPage.page).toHaveURL(/inventory.html/);
     });
 
     test('Verify that the checkout page appear after clicking the checkout button', async ({ loginPage, inventoryPage, cartPage }) => {
@@ -51,6 +51,6 @@ test.describe('Cart cases', () => {
         await inventoryPage.addProductToCart('Sauce Labs Backpack');
         await cartPage.openCart();
         await cartPage.clickCheckout();
-        expect(cartPage.page).toHaveURL(/checkout-step-one.html/);
+        await expect(cartPage.page).toHaveURL(/checkout-step-one.html/);
     });
 });

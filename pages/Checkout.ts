@@ -6,8 +6,8 @@ export class Checkout {
     readonly lastName: Locator;
     readonly postalCode: Locator;
     readonly continueButton: Locator;
-    readonly itemsNames: Locator;
-    readonly itemPrice: Locator;
+    readonly itemNames: Locator;
+    readonly itemPrices: Locator;
     readonly finishButton: Locator;
     readonly subtotalLabel: Locator;
     readonly taxLabel: Locator;
@@ -21,8 +21,11 @@ export class Checkout {
         this.lastName = page.getByTestId('lastName');
         this.postalCode = page.getByTestId('postalCode');
         this.continueButton = page.getByTestId('continue');
-        this.itemsNames = page.getByTestId('inventory-item-name');
-        this.itemPrice = page.getByTestId('inventory-item-price');
+        // The checkout overview uses the cart item markup, whose stable app classes
+        // are present even though these nodes do not expose the data-test ids used
+        // on the inventory and cart pages.
+        this.itemNames = page.locator('.cart_item .inventory_item_name');
+        this.itemPrices = page.locator('.cart_item .inventory_item_price');
         this.finishButton = page.getByTestId('finish');
         this.subtotalLabel = page.getByTestId('subtotal-label');
         this.taxLabel = page.getByTestId('tax-label');
@@ -31,20 +34,12 @@ export class Checkout {
         this.thankYouHeaderMessage = page.getByTestId('complete-header');
     }
 
-    //Complete step 1 pf the checkoiut process by filling in the checkout information and clicking the continue button
+    // Complete checkout step one and continue to the order overview.
     async fillCheckoutInformation(firstName: string, lastName: string, postalCode: string) {
         await this.firstName.fill(firstName);
         await this.lastName.fill(lastName);
         await this.postalCode.fill(postalCode);
         await this.continueButton.click();
-    }
-
-    async getItemNames(): Promise<string[]> {
-        return await this.itemsNames.allTextContents();
-    }
-
-    async getItemPrices(): Promise<string[]> {
-        return await this.itemPrice.allTextContents();
     }
 
     async finishCheckout() {
@@ -53,9 +48,5 @@ export class Checkout {
 
     async cancelCheckout() {
         await this.cancelButton.click();
-    }
-
-    async successMessage(): Promise<string | null> {
-        return await this.thankYouHeaderMessage.textContent();
     }
 }
